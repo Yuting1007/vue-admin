@@ -38,12 +38,24 @@
             maxlength="20"
           ></el-input>
         </el-form-item>
+        <el-form-item
+          prop="password_retype"
+          class="itemForm"
+          v-if="model === 'register'"
+        >
+          <label>Retype Password</label>
+          <el-input
+            type="password"
+            v-model="ruleForm.password_retype"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
         <el-form-item prop="code" class="itemForm">
           <label>Validation Code</label>
           <el-row :gutter="11">
             <el-col :span="16"
               ><el-input
-                v-model.number="ruleForm.code"
+                v-model="ruleForm.code"
                 minlength="6"
                 maxlength="6"
               ></el-input
@@ -68,12 +80,16 @@
   </div>
 </template>
 <script>
-import { validate_email, validate_password } from "@/utils/validate";
+import {
+  validate_email,
+  validate_password,
+  stripscript
+} from "@/utils/validate";
 export default {
   name: "Login",
   data() {
     //validate email
-    var validateEmail = (rule, value, callback) => {
+    const validateEmail = (rule, value, callback) => {
       let regEmail = validate_email(value);
       if (value === "") {
         callback(new Error("Please input the email"));
@@ -84,7 +100,10 @@ export default {
       }
     };
     //validate password
-    var validatePassword = (rule, value, callback) => {
+    const validatePassword = (rule, value, callback) => {
+      //fillter the input
+      this.ruleForm.password = stripscript(value);
+      value = this.ruleForm.password;
       let regPassword = validate_password(value);
       if (value === "") {
         callback(new Error("Please input the password"));
@@ -98,8 +117,25 @@ export default {
         callback();
       }
     };
+    //validate retype password
+    const validateRetypePassword = (rule, value, callback) => {
+      //fillter the input
+      this.ruleForm.password_retype = stripscript(value);
+      value = this.ruleForm.password_retype;
+      if (value === "") {
+        callback(new Error("please retype password"));
+      } else if (value != this.ruleForm.password) {
+        callback(new Error("retyped password doesn't match"));
+      } else {
+        callback();
+      }
+    };
+
     //validate code
     const validateCode = (rule, value, callback) => {
+      //fillter the input
+      this.ruleForm.code = stripscript(value);
+      value = this.ruleForm.code;
       if (value === "") {
         callback(new Error("Please input the code"));
       } else if (value.length !== 6) {
@@ -110,19 +146,24 @@ export default {
     };
     return {
       menuTab: [
-        { txt: "Login", current: true },
-        { txt: "Sign Up", current: false }
+        { txt: "Login", current: true, type: "login" },
+        { txt: "Sign Up", current: false, type: "register" }
       ],
+      model: "login",
       isActive: true,
       //form data
       ruleForm: {
         email: "",
         password: "",
+        password_retype: "",
         code: ""
       },
       rules: {
         email: [{ validator: validateEmail, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
+        password_retype: [
+          { validator: validateRetypePassword, trigger: "blur" }
+        ],
         code: [{ validator: validateCode, trigger: "blur" }]
       }
     };
@@ -135,6 +176,7 @@ export default {
         elem.current = false;
       });
       data.current = true;
+      this.model = data.type;
     },
     //form methods
     submitForm(formName) {
