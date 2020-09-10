@@ -7,7 +7,9 @@
           :key="item.id"
           :class="{ current: item.current }"
           @click="toggleMenu(item)"
-        >{{ item.txt }}</li>
+        >
+          {{ item.txt }}
+        </li>
       </ul>
       <!-- login form -->
       <el-form
@@ -20,7 +22,11 @@
       >
         <el-form-item prop="email" class="itemForm">
           <label>Email</label>
-          <el-input type="text" v-model="ruleForm.email" autocomplete="off"></el-input>
+          <el-input
+            type="text"
+            v-model="ruleForm.email"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="password" class="itemForm">
           <label>Password</label>
@@ -32,15 +38,27 @@
             maxlength="20"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="password_retype" class="itemForm" v-if="model === 'register'">
+        <el-form-item
+          prop="password_retype"
+          class="itemForm"
+          v-if="model === 'register'"
+        >
           <label>Retype Password</label>
-          <el-input type="password" v-model="ruleForm.password_retype" autocomplete="off"></el-input>
+          <el-input
+            type="password"
+            v-model="ruleForm.password_retype"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="code" class="itemForm">
           <label>Validation Code</label>
           <el-row :gutter="11">
             <el-col :span="16">
-              <el-input v-model="ruleForm.code" minlength="6" maxlength="6"></el-input>
+              <el-input
+                v-model="ruleForm.code"
+                minlength="6"
+                maxlength="6"
+              ></el-input>
             </el-col>
             <el-col :span="8">
               <el-button type="success" class="block">Get Code</el-button>
@@ -48,7 +66,12 @@
           </el-row>
         </el-form-item>
         <el-form-item>
-          <el-button type="danger" class="login_btn block" @click="submitForm('ruleForm')">Submit</el-button>
+          <el-button
+            type="danger"
+            class="login_btn block"
+            @click="submitForm('ruleForm')"
+            >Submit</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
